@@ -1,0 +1,30 @@
+version: '3.8'
+services:
+  web:
+    image: lab-so-web:v1
+    container_name: nodo_web
+    restart: unless-stopped
+    ports:
+      - "8080:5000"
+    environment:
+      REDIS_HOST: nodo_db
+      REDIS_PORT: 6379
+    networks:
+      - red-so-interna
+    depends_on:
+      - db-redis
+  db-redis:
+    image: redis:alpine
+    container_name: nodo_db
+    restart: unless-stopped
+    command: redis-server --appendonly yes
+    volumes:
+      - datos-redis:/data
+    networks:
+      - red-so-interna
+networks:
+  red-so-interna:
+    driver: bridge
+volumes:
+  datos-redis:
+    driver: local
